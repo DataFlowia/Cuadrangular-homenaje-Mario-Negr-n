@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuadrangular de Básquetbol - Homenaje a Mario Negrón Molina Q.E.P.D.</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fffbeeb',
+                            100: '#fef3c7',
+                            500: '#d97706',
+                            600: '#b45309',
+                            700: '#92400e',
+                            800: '#78350f',
+                            900: '#451a03',
+                        },
+                        slatecustom: {
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar & chart container rules */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 580px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 380px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 360px;
+            }
+        }
+        .tab-active {
+            border-bottom: 3px solid #b45309;
+            color: #92400e;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="bg-amber-50/40 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Chosen Palette: Warm Amber & Deep Slate (Slate-900, Amber-600, Amber-50, Slate-50) -->
+    <!-- Application Structure Plan: To provide a professional operational dashboard and interactive guide for organizers, teams, press, and attendees of the Mario Negrón Molina Memorial Quadrangular. The SPA is structured into 6 thematic modules: Executive Overview & Countdown, Interactive Fixture & Match Center, Operational Commissions Task Hub, Tribute & Legacy Section, Solidarity Campaign (Parroquia Leopoldo Mandic Tracker), and GORE Financial & Budgetary Analytics. This layout transforms static planning into an actionable operational cockpit. -->
+    <!-- Visualization & Content Choices: 
+      - GORE Project Budget Allocation: Chart.js Doughnut Chart -> Interactive item selection -> Displays percentage and exact allocation per commission item.
+      - Interactive Fixture Timeline: HTML/Tailwind Card View -> Day filter buttons -> Switches match schedules dynamically with detail popovers.
+      - Commission Checklist System: Interactive HTML grid with JS state toggles -> Interactive status updates for organizing committees.
+      - Solidarity Food Drive Metrics: Progress bar with dynamic target calculation -> Shows real-time simulated collection status for Parroquia Leopoldo Mandic.
+      - Visual diagram & icons: Rendered entirely using styled Tailwind CSS elements, borders, typography, and clean Unicode glyphs. NO SVG or Mermaid JS used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Header / Banner Header -->
+    <header class="bg-slate-900 text-white border-b-4 border-amber-600 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-amber-600 text-slate-900 rounded-full flex items-center justify-center font-black text-2xl shadow-inner border border-amber-300">
+                    🏀
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-amber-400">
+                        CUADRANGULAR DE BÁSQUETBOL 2026
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-300 font-medium">
+                        Homenaje a Mario Negrón Molina Q.E.P.D. | <span class="text-amber-200">Maxibásquet Osorno</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 text-xs sm:text-sm text-slate-300 bg-slate-800/80 px-4 py-2 rounded-lg border border-slate-700">
+                <span>📍 Gimnasio Liceo Eleuterio Ramírez, Osorno</span>
+                <span class="text-amber-500">|</span>
+                <span>📅 02 y 03 de Octubre 2026</span>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <nav class="bg-slate-800 border-t border-slate-700 text-xs sm:text-sm overflow-x-auto">
+            <div class="max-w-7xl mx-auto px-4 flex whitespace-nowrap space-x-1 sm:space-x-6">
+                <button onclick="switchTab('tab-cronograma')" id="btn-cronograma" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition tab-active">
+                    ⏱️ Cronograma & Fixture
+                </button>
+                <button onclick="switchTab('tab-comisiones')" id="btn-comisiones" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition">
+                    📋 Comisiones Operativas
+                </button>
+                <button onclick="switchTab('tab-homenaje')" id="btn-homenaje" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition">
+                    🏆 Homenaje & Delegaciones
+                </button>
+                <button onclick="switchTab('tab-social')" id="btn-social" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition">
+                    🤝 Campaña Solidaria
+                </button>
+                <button onclick="switchTab('tab-finanzas')" id="btn-finanzas" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition">
+                    📊 Gestión Financiera GORE
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- INTRODUCTORY BRIEF -->
+        <div class="mb-8 bg-white p-6 rounded-2xl shadow-sm border border-amber-200/60">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                <div>
+                    <span class="inline-block bg-amber-100 text-amber-800 font-semibold text-xs px-3 py-1 rounded-full uppercase tracking-wider mb-2">
+                        Manual Operativo Oficial & Plataforma de Gestión
+                    </span>
+                    <h2 class="text-2xl font-bold text-slate-900">
+                        Plataforma Integrada del Campeonato Cuadrangular
+                    </h2>
+                    <p class="text-slate-600 text-sm mt-1 max-w-3xl">
+                        Este portal interactivo centraliza toda la planificación deportiva, logística, ceremonial y financiera del cuadrangular organizado por el <strong>Club Deportivo, Social y Cultural Maxibásquetbol de Osorno</strong>. Explore los horarios detallados, el seguimiento de comisiones, el plan social para la Parroquia Leopoldo Mandic y el presupuesto financiado por el Proyecto GORE.
+                    </p>
+                </div>
+                <div class="flex items-center space-x-3 w-full lg:w-auto justify-end">
+                    <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-center min-w-[120px]">
+                        <span class="block text-2xl font-black text-amber-700">4</span>
+                        <span class="text-xs font-semibold text-slate-600">Clubes Élite</span>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-center min-w-[120px]">
+                        <span class="block text-2xl font-black text-amber-700">4</span>
+                        <span class="text-xs font-semibold text-slate-600">Partidos Definitorios</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 1: CRONOGRAMA & FIXTURE -->
+        <section id="tab-cronograma" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <span class="text-amber-600">🗓️</span> Fixture Deportivo y Cronograma de Encuentros
+                </h3>
+                <p class="text-slate-600 text-sm mb-6">
+                    El campeonato consta de 4 partidos disputados entre el viernes 02 y sábado 03 de Octubre de 2026 en el Gimnasio del Liceo Eleuterio Ramírez. Seleccione una jornada para revisar los horarios detallados, actos inaugurales, arbitrajes y enlaces de transmisión.
+                </p>
+
+                <!-- Day Selector Buttons -->
+                <div class="flex space-x-3 mb-6">
+                    <button onclick="filterSchedule('viernes')" id="btn-day-1" class="px-5 py-2.5 rounded-xl font-semibold text-sm bg-amber-600 text-white shadow-sm hover:bg-amber-700 transition">
+                        Viernes 02 de Octubre (Jornada Inaugural)
+                    </button>
+                    <button onclick="filterSchedule('sabado')" id="btn-day-2" class="px-5 py-2.5 rounded-xl font-semibold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+                        Sábado 03 de Octubre (Jornada de Clausura)
+                    </button>
+                </div>
+
+                <!-- Timeline / Cards View -->
+                <div id="schedule-container" class="space-y-4">
+                    <!-- Dynamic rendering powered by JS -->
+                </div>
+            </div>
+
+            <!-- Operational Protocol Note -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start space-x-3">
+                    <span class="text-2xl">📺</span>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-sm">Transmisión Oficial</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">Cobertura en vivo vía Facebook Live para todos los encuentros con relatores y entrevistas interactivas.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start space-x-3">
+                    <span class="text-2xl">⚖️</span>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-sm">Arbitraje & Control</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">Mesa de control colegiada, estadístico digital en tiempo real y oficiales de reloj de 24 segundos contratados.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start space-x-3">
+                    <span class="text-2xl">🍷</span>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-sm">Convivencia Final</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">Sábado 21:30 Hrs. en Sede Social Club Rangers con planteles, autoridades y directiva organizadora.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: COMISIONES OPERATIVAS -->
+        <section id="tab-comisiones" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <span class="text-amber-600">📋</span> Matriz de Control por Comisiones Operativas
+                        </h3>
+                        <p class="text-slate-600 text-sm">
+                            Haga clic en los ítems de control para marcar las tareas completadas y dar seguimiento al estado de preparación general de la comisión.
+                        </p>
+                    </div>
+                    <div class="bg-amber-50 px-4 py-2 rounded-xl border border-amber-200 text-right">
+                        <span class="text-xs text-slate-500 font-semibold block">Avance General Estimado</span>
+                        <span id="overall-progress" class="text-lg font-black text-amber-700">0%</span>
+                    </div>
+                </div>
+
+                <!-- Commission Filter Pills -->
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <button onclick="filterCommission('all')" class="comm-filter-btn active-comm px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white">Todas las Comisiones</button>
+                    <button onclick="filterCommission('difusion')" class="comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Difusión & Marketing</button>
+                    <button onclick="filterCommission('logistica')" class="comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Logística Recinto</button>
+                    <button onclick="filterCommission('ceremonia')" class="comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Protocolo & Convivencia</button>
+                    <button onclick="filterCommission('social')" class="comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Acción Social</button>
+                    <button onclick="filterCommission('finanzas')" class="comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Finanzas GORE</button>
+                </div>
+
+                <!-- Interactive Checklist Cards Container -->
+                <div id="commissions-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Javascript populates interactive cards here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: HOMENAJE & DELEGACIONES -->
+        <section id="tab-homenaje" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Mario Negrón Profile Card -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 flex flex-col justify-between">
+                    <div>
+                        <div class="w-20 h-20 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center font-bold text-3xl mx-auto mb-4 border-2 border-amber-400">
+                            👤
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 text-center">Don Mario Negrón Molina</h3>
+                        <p class="text-xs text-amber-700 font-bold text-center uppercase tracking-widest mb-4">Q.E.P.D. - Homenajeado Honorífico</p>
+                        <hr class="border-slate-100 mb-4">
+                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                            Destacado jugador, director técnico y referente del básquetbol en la Región de Los Lagos. Su legado deportivo, rectitud humana y permanente apoyo a las nuevas generaciones forman el pilar fundamental de este cuadrangular conmemorativo.
+                        </p>
+                        <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 space-y-2 text-xs">
+                            <div class="flex justify-between">
+                                <span class="font-semibold text-slate-700">Reconocimiento:</span>
+                                <span class="text-amber-800 font-bold">Galvano Institucional</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold text-slate-700">Entrega:</span>
+                                <span class="text-amber-800 font-bold">Familiares Directos</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold text-slate-700">Ceremonia:</span>
+                                <span class="text-amber-800 font-bold">Sábado 03 (20:00 Hrs)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <span class="block text-center text-xs text-slate-500 italic">"Honor y gratitud a quien dejó huella en las canchas de Osorno."</span>
+                    </div>
+                </div>
+
+                <!-- Quad Teams Showcase -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 space-y-4">
+                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <span class="text-amber-600">🛡️</span> Clubes Participantes & Enfrentamientos
+                    </h3>
+                    <p class="text-slate-600 text-sm mb-4">
+                        El torneo reúne a cuatro prestigiosas instituciones del básquetbol regional de la zona sur.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        
+                        <!-- Team 1 -->
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-amber-50/50 transition flex items-start space-x-3">
+                            <span class="text-3xl">🔵</span>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">Club Atlético Llanquihue</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Llave Semifinal A (Viernes 19:30 Hrs)</p>
+                                <span class="inline-block mt-2 text-[11px] font-semibold bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Delegación Visitante</span>
+                            </div>
+                        </div>
+
+                        <!-- Team 2 -->
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-amber-50/50 transition flex items-start space-x-3">
+                            <span class="text-3xl">⚪</span>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">CD Gimnástico Alemán</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Llave Semifinal A (Viernes 19:30 Hrs)</p>
+                                <span class="inline-block mt-2 text-[11px] font-semibold bg-slate-200 text-slate-800 px-2 py-0.5 rounded">Llanquihue</span>
+                            </div>
+                        </div>
+
+                        <!-- Team 3 -->
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-amber-50/50 transition flex items-start space-x-3">
+                            <span class="text-3xl">🟡</span>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">Maxibásquetbol Osorno</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Llave Semifinal B (Viernes 21:30 Hrs)</p>
+                                <span class="inline-block mt-2 text-[11px] font-semibold bg-amber-200 text-amber-900 px-2 py-0.5 rounded">Club Anfitrión</span>
+                            </div>
+                        </div>
+
+                        <!-- Team 4 -->
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-amber-50/50 transition flex items-start space-x-3">
+                            <span class="text-3xl">🔴</span>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">CD Fusión Puerto Montt</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Llave Semifinal B (Viernes 21:30 Hrs)</p>
+                                <span class="inline-block mt-2 text-[11px] font-semibold bg-red-100 text-red-800 px-2 py-0.5 rounded">Puerto Montt</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Awards section preview -->
+                    <div class="mt-6 bg-slate-900 text-white p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div>
+                            <h4 class="font-bold text-amber-400 text-sm">Premios y Distinciones Oficiales</h4>
+                            <p class="text-xs text-slate-300">Trofeos institucionales, medallas conmemorativas, reconocimiento Fair Play y Goleador del torneo.</p>
+                        </div>
+                        <span class="bg-amber-600 text-slate-900 text-xs font-extrabold px-3 py-1.5 rounded-lg whitespace-nowrap">Mesa Protocolar</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 4: CAMPAÑA SOLIDARIA PARROQUIA -->
+        <section id="tab-social" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="max-w-3xl">
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">Acción Social Solidaria</span>
+                    <h3 class="text-xl font-bold text-slate-900 mt-2 flex items-center gap-2">
+                        <span class="text-emerald-600">📦</span> Acopio de Alimentos: Parroquia Leopoldo Mandic
+                    </h3>
+                    <p class="text-slate-600 text-sm mt-1">
+                        El cuadrangular posee un fuerte fin social. Todo el público asistente, delegaciones deportivas y dirigentes colaborarán donando alimentos no perecibles para las familias vulnerables atendidas por la Parroquia Leopoldo Mandic.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <!-- Dynamic Donation Tracker -->
+                    <div class="bg-emerald-50/60 border border-emerald-200 p-6 rounded-xl space-y-4">
+                        <h4 class="font-bold text-slate-900 text-sm flex justify-between">
+                            <span>Meta Estimada de Donaciones</span>
+                            <span class="text-emerald-700 font-extrabold" id="donation-target-text">500 kg / Cajas</span>
+                        </h4>
+                        
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-emerald-200 rounded-full h-4 overflow-hidden">
+                            <div id="donation-progress-bar" class="bg-emerald-600 h-4 rounded-full transition-all duration-500" style="width: 65%;"></div>
+                        </div>
+                        
+                        <div class="flex justify-between text-xs text-slate-600 font-medium">
+                            <span>Recaudación Prevista: <strong id="current-donation-text" class="text-emerald-800">325 kg</strong></span>
+                            <span>Estado: <strong class="text-emerald-700">En Campaña Masiva</strong></span>
+                        </div>
+
+                        <!-- Simulator button -->
+                        <div class="pt-2 border-t border-emerald-200 flex gap-2">
+                            <button onclick="addDonation(25)" class="text-xs bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-semibold hover:bg-emerald-800 transition">+ Sumar 25 kg (Simulación)</button>
+                            <button onclick="resetDonation()" class="text-xs bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-semibold hover:bg-slate-300 transition">Reiniciar</button>
+                        </div>
+                    </div>
+
+                    <!-- Operational Steps for Food Drive -->
+                    <div class="space-y-3 text-xs text-slate-700">
+                        <div class="p-3 bg-white rounded-lg border border-slate-200 flex items-start space-x-3">
+                            <span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Paso 1</span>
+                            <div>
+                                <strong class="block text-slate-900">Difusión Preventiva</strong>
+                                Solicitud formal en invitaciones a planteles e hinchadas para ingresar con al menos 1 alimento no perecible.
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-white rounded-lg border border-slate-200 flex items-start space-x-3">
+                            <span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Paso 2</span>
+                            <div>
+                                <strong class="block text-slate-900">Punto de Acopio en Recinto</strong>
+                                Habilitación de stand exclusivo señalizado a la entrada del Gimnasio Liceo Eleuterio Ramírez.
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-white rounded-lg border border-slate-200 flex items-start space-x-3">
+                            <span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Paso 3</span>
+                            <div>
+                                <strong class="block text-slate-900">Entrega Formal</strong>
+                                Traslado y acta oficial de recepción con representantes de la Parroquia Leopoldo Mandic durante el acto de clausura.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: GESTIÓN FINANCIERA GORE -->
+        <section id="tab-finanzas" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="mb-6">
+                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Proyecto Fondos GORE</span>
+                    <h3 class="text-xl font-bold text-slate-900 mt-2 flex items-center gap-2">
+                        <span class="text-amber-600">📊</span> Distribución Presupuestaria y Rendición de Cuentas
+                    </h3>
+                    <p class="text-slate-600 text-sm mt-1">
+                        Estructura financiera de compras, contrataciones e ítems operativos aprobados dentro del marco presupuestario del Gobierno Regional (GORE) para la ejecución impecable del campeonato.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    
+                    <!-- Chart.js Container -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col items-center">
+                        <h4 class="text-sm font-bold text-slate-900 mb-2">Desglose de Gastos Aprobados</h4>
+                        <div class="chart-container">
+                            <canvas id="budgetChart"></canvas>
+                        </div>
+                        <span class="text-[11px] text-slate-500 mt-2">Valores porcentuales de imputación directa GORE</span>
+                    </div>
+
+                    <!-- Itemized Financial Breakdown Table -->
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-slate-900 text-sm">Ítems Financieros & Respaldo Documental</h4>
+                        
+                        <div class="divide-y divide-slate-100 text-xs border border-slate-200 rounded-xl overflow-hidden bg-white">
+                            <div class="p-3 flex justify-between items-center bg-slate-50 font-bold text-slate-700">
+                                <span>Ítem / Concepto</span>
+                                <span>Porcentaje / Destino</span>
+                            </div>
+                            <div class="p-3 flex justify-between items-center">
+                                <div>
+                                    <strong class="block text-slate-800">Arbitraje y Mesa de Control</strong>
+                                    <span class="text-slate-500 text-[11px]">Jueces oficiales, planilleros y estadístico</span>
+                                </div>
+                                <span class="font-bold text-amber-800 bg-amber-50 px-2 py-1 rounded">30%</span>
+                            </div>
+                            <div class="p-3 flex justify-between items-center">
+                                <div>
+                                    <strong class="block text-slate-800">Convivencia & Cóctel de Clausura</strong>
+                                    <span class="text-slate-500 text-[11px]">Sede Club Rangers + 2 Manipuladoras</span>
+                                </div>
+                                <span class="font-bold text-amber-800 bg-amber-50 px-2 py-1 rounded">25%</span>
+                            </div>
+                            <div class="p-3 flex justify-between items-center">
+                                <div>
+                                    <strong class="block text-slate-800">Indumentaria & Merchandising</strong>
+                                    <span class="text-slate-500 text-[11px]">Poleras oficiales homenaje Mario Negrón</span>
+                                </div>
+                                <span class="font-bold text-amber-800 bg-amber-50 px-2 py-1 rounded">20%</span>
+                            </div>
+                            <div class="p-3 flex justify-between items-center">
+                                <div>
+                                    <strong class="block text-slate-800">Adecuación de Recinto & Sonido</strong>
+                                    <span class="text-slate-500 text-[11px]">Pintura de aros, mallas y amplificación</span>
+                                </div>
+                                <span class="font-bold text-amber-800 bg-amber-50 px-2 py-1 rounded">15%</span>
+                            </div>
+                            <div class="p-3 flex justify-between items-center">
+                                <div>
+                                    <strong class="block text-slate-800">Difusión, Prensa & Rollers</strong>
+                                    <span class="text-slate-500 text-[11px]">Pendones, avisaje y lanzamiento Club Osorno</span>
+                                </div>
+                                <span class="font-bold text-amber-800 bg-amber-50 px-2 py-1 rounded">10%</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900">
+                            <strong>⚠️ Requisito de Rendición GORE:</strong> Todo gasto debe acompañarse estricta y cronológicamente de boleta/factura electrónica, libro de asistencia a convivencias y respaldo fotográfico en alta resolución.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="font-medium text-slate-300">
+                Club Deportivo, Social y Cultural Maxibásquetbol de Osorno &copy; 2026
+            </p>
+            <p class="text-slate-500">
+                Homenaje Oficial a Mario Negrón Molina Q.E.P.D. | Gimnasio Liceo Eleuterio Ramírez
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Data Store for Fixture
+        const fixtureData = {
+            viernes: [
+                {
+                    time: "18:30 Hrs.",
+                    title: "Apertura de Puertas & Recepción Solidaria",
+                    desc: "Habilitación del Gimnasio y recepción de alimentos no perecibles para la Parroquia Leopoldo Mandic.",
+                    type: "Logística / Puertas",
+                    badgeBg: "bg-blue-100 text-blue-800"
+                },
+                {
+                    time: "19:15 Hrs.",
+                    title: "Ceremonia Breve de Inauguración",
+                    desc: "Formación de delegaciones en cancha, discurso del Presidente del Club Maxibásquetbol Osorno y palabras en memoria de Don Mario Negrón Molina Q.E.P.D.",
+                    type: "Protocolo",
+                    badgeBg: "bg-amber-100 text-amber-800"
+                },
+                {
+                    time: "19:30 Hrs.",
+                    title: "Partido 1 - Llave Semifinal A",
+                    teams: "Club Atlético Llanquihue vs. CD Gimnástico Alemán de Llanquihue",
+                    desc: "Transmitido en vivo vía Facebook Live. Oficiales de mesa colegiados y reloj de 24s activo.",
+                    type: "Partido Semifinal",
+                    badgeBg: "bg-emerald-100 text-emerald-800"
+                },
+                {
+                    time: "21:00 Hrs.",
+                    title: "Acto Intermedio & Saludo Institucional",
+                    desc: "Revisión técnica de marcador y presentación de auspiciadores (Coca Cola).",
+                    type: "Pausa Protocolar",
+                    badgeBg: "bg-slate-100 text-slate-800"
+                },
+                {
+                    time: "21:30 Hrs.",
+                    title: "Partido 2 - Llave Semifinal B",
+                    teams: "CDSC Maxibásquetbol Osorno vs. CD Fusión de Puerto Montt",
+                    desc: "Cierre de la jornada inaugural. Transmisión integral y registro estadístico digital.",
+                    type: "Partido Semifinal",
+                    badgeBg: "bg-emerald-100 text-emerald-800"
+                }
+            ],
+            sabado: [
+                {
+                    time: "15:00 Hrs.",
+                    title: "Apertura de Recinto",
+                    desc: "Reorganización de camarines, revisión de agua caliente y acopio de donaciones.",
+                    type: "Logística",
+                    badgeBg: "bg-blue-100 text-blue-800"
+                },
+                {
+                    time: "16:00 Hrs.",
+                    title: "Partido 3 - Disputa del Tercer Lugar",
+                    teams: "Perdedor Partido 1 vs. Perdedor Partido 2",
+                    desc: "Encuentro por la definición del podio regional.",
+                    type: "Definición 3º Puesto",
+                    badgeBg: "bg-amber-100 text-amber-800"
+                },
+                {
+                    time: "17:30 Hrs.",
+                    title: "Show Intermedio & Prensa",
+                    desc: "Entrevistas a dirigentes y jugadores para Reels institucionales.",
+                    type: "Prensa / Show",
+                    badgeBg: "bg-slate-100 text-slate-800"
+                },
+                {
+                    time: "18:00 Hrs.",
+                    title: "Partido 4 - GRAN FINAL DEL CUADRANGULAR",
+                    teams: "Ganador Partido 1 vs. Ganador Partido 2",
+                    desc: "Disputa del título con máximo despliegue de cobertura digital.",
+                    type: "Gran Final",
+                    badgeBg: "bg-red-100 text-red-800 font-bold"
+                },
+                {
+                    time: "20:00 Hrs.",
+                    title: "Ceremonia Oficial de Premiación & Clausura",
+                    desc: "Exhibición de copas en mesa protocolar, galvano a familiares de Mario Negrón, distinciones Fair Play y Goleador.",
+                    type: "Ceremonia de Honor",
+                    badgeBg: "bg-amber-100 text-amber-900"
+                },
+                {
+                    time: "21:30 Hrs.",
+                    title: "Convivencia de Clausura (Sede Club Rangers)",
+                    desc: "Cóctel institucional para delegaciones, autoridades y auspiciadores atendido por 2 manipuladoras calificadas.",
+                    type: "Camaradería",
+                    badgeBg: "bg-purple-100 text-purple-800"
+                }
+            ]
+        };
+
+        // Data Store for Commissions Checklist
+        const commissionsData = [
+            { id: 1, cat: "difusion", title: "Lanzamiento y Conferencia de Prensa", desc: "Coffee break en salones del Club Osorno con medios locales.", done: true },
+            { id: 2, cat: "difusion", title: "Merchandising & Poleras Oficiales", desc: "Confección de poleras con la efigie de Don Mario Negrón.", done: true },
+            { id: 3, cat: "difusion", title: "Auspicio Coca-Cola & Pendones", desc: "Gestión de hidratación comercial y pendones/rollers de cancha.", done: false },
+            { id: 4, cat: "difusion", title: "Facebook Live & Reels", desc: "Contratación de equipo de transmisión streaming y fotógrafo.", done: true },
+            { id: 5, cat: "logistica", title: "Arbitraje & Mesa de Control", desc: "Contrato formal de jueces colegiados y turnos de mesa.", done: true },
+            { id: 6, cat: "logistica", title: "Mantenimiento Recinto Liceo", desc: "Pintura de aros, reposición de mallas y chequeo de marcador/24s.", done: false },
+            { id: 7, cat: "logistica", title: "Agua Caliente Camarines", desc: "Coordinación con administración del recinto para termotanque.", done: true },
+            { id: 8, cat: "ceremonia", title: "Mesa de Premiación Protocolar", desc: "Mantel institucional con logo del club, copas y medallas.", done: false },
+            { id: 9, cat: "ceremonia", title: "Sede Social Club Rangers", desc: "Reserva del recinto y coordinación con 2 manipuladoras de alimentos.", done: true },
+            { id: 10, cat: "social", title: "Stand Parroquia Leopoldo Mandic", desc: "Habilitación de punto de recepción y cajas de acopio.", done: true },
+            { id: 11, cat: "finanzas", title: "Presupuesto & Respaldos GORE", desc: "Compilado de facturas, boletas y rendición al Proyecto GORE.", done: false }
+        ];
+
+        // Interactive Tab Switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+            
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            const activeBtn = document.getElementById('btn-' + tabId.replace('tab-', ''));
+            if(activeBtn) activeBtn.classList.add('tab-active');
+
+            if(tabId === 'tab-finanzas') {
+                renderChart();
+            }
+        }
+
+        // Render Schedule Timeline
+        function filterSchedule(day) {
+            const container = document.getElementById('schedule-container');
+            const btn1 = document.getElementById('btn-day-1');
+            const btn2 = document.getElementById('btn-day-2');
+
+            if(day === 'viernes') {
+                btn1.className = "px-5 py-2.5 rounded-xl font-semibold text-sm bg-amber-600 text-white shadow-sm hover:bg-amber-700 transition";
+                btn2.className = "px-5 py-2.5 rounded-xl font-semibold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
+            } else {
+                btn2.className = "px-5 py-2.5 rounded-xl font-semibold text-sm bg-amber-600 text-white shadow-sm hover:bg-amber-700 transition";
+                btn1.className = "px-5 py-2.5 rounded-xl font-semibold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
+            }
+
+            const items = fixtureData[day];
+            container.innerHTML = items.map(item => `
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-amber-50/40 transition">
+                    <div class="flex items-start space-x-3">
+                        <span class="bg-slate-900 text-amber-400 font-extrabold text-xs px-3 py-1.5 rounded-lg whitespace-nowrap">${item.time}</span>
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-sm">${item.title}</h4>
+                            ${item.teams ? `<p class="text-xs font-semibold text-amber-800 my-0.5">${item.teams}</p>` : ''}
+                            <p class="text-xs text-slate-600">${item.desc}</p>
+                        </div>
+                    </div>
+                    <span class="text-[11px] px-2.5 py-1 rounded-md font-semibold ${item.badgeBg}">${item.type}</span>
+                </div>
+            `).join('');
+        }
+
+        // Render Commissions Checklist
+        function renderCommissions(filterCat = 'all') {
+            const container = document.getElementById('commissions-list');
+            const filtered = filterCat === 'all' 
+                ? commissionsData 
+                : commissionsData.filter(c => c.cat === filterCat);
+
+            container.innerHTML = filtered.map(item => `
+                <div onclick="toggleTask(${item.id})" class="cursor-pointer p-4 rounded-xl border ${item.done ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 bg-white'} hover:shadow-md transition flex items-start space-x-3">
+                    <div class="mt-0.5 w-5 h-5 rounded border ${item.done ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 bg-white'} flex items-center justify-center font-bold text-xs flex-shrink-0">
+                        ${item.done ? '✓' : ''}
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-sm ${item.done ? 'line-through text-slate-500' : 'text-slate-900'}">${item.title}</h4>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${item.cat}</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mt-1">${item.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            updateOverallProgress();
+        }
+
+        function toggleTask(id) {
+            const item = commissionsData.find(c => c.id === id);
+            if(item) {
+                item.done = !item.done;
+                renderCommissions(currentCommissionFilter);
+            }
+        }
+
+        let currentCommissionFilter = 'all';
+        function filterCommission(cat) {
+            currentCommissionFilter = cat;
+            document.querySelectorAll('.comm-filter-btn').forEach(btn => {
+                btn.className = "comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200";
+            });
+            event.target.className = "comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white";
+            renderCommissions(cat);
+        }
+
+        function updateOverallProgress() {
+            const total = commissionsData.length;
+            const completed = commissionsData.filter(c => c.done).length;
+            const pct = Math.round((completed / total) * 100);
+            document.getElementById('overall-progress').innerText = `${pct}%`;
+        }
+
+        // Solidarity Donation Simulator
+        let currentDonation = 325;
+        const targetDonation = 500;
+
+        function addDonation(amount) {
+            currentDonation = Math.min(targetDonation, currentDonation + amount);
+            updateDonationUI();
+        }
+
+        function resetDonation() {
+            currentDonation = 325;
+            updateDonationUI();
+        }
+
+        function updateDonationUI() {
+            const pct = Math.round((currentDonation / targetDonation) * 100);
+            document.getElementById('donation-progress-bar').style.width = `${pct}%`;
+            document.getElementById('current-donation-text').innerText = `${currentDonation} kg`;
+        }
+
+        // Chart.js Setup for Budget
+        let chartInstance = null;
+        function renderChart() {
+            if (chartInstance) return; // Only instantiate once
+
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Arbitraje y Mesa (30%)',
+                        'Convivencia & Cóctel (25%)',
+                        'Poleras Merchandising (20%)',
+                        'Infraestructura Recinto (15%)',
+                        'Difusión y Prensa (10%)'
+                    ],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 10],
+                        backgroundColor: [
+                            '#b45309', // amber-700
+                            '#d97706', // amber-500
+                            '#f59e0b', // amber-400
+                            '#1e293b', // slate-800
+                            '#64748b'  // slate-500
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.label}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize default view
+        window.addEventListener('DOMContentLoaded', () => {
+            filterSchedule('viernes');
+            renderCommissions('all');
+        });
+    </script>
+</body>
+</html>
