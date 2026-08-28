@@ -49,16 +49,24 @@
         }
         .tab-active {
             border-bottom: 3px solid #b45309;
-            color: #92400e;
+            color: #f59e0b;
             font-weight: 700;
+            background-color: rgba(30, 41, 59, 0.6);
+        }
+        .mobile-tab-active {
+            background-color: #b45309;
+            color: #ffffff;
+            font-weight: 700;
+            border-left: 4px solid #f59e0b;
         }
     </style>
 </head>
 <body class="bg-amber-50/40 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
 
     <!-- Chosen Palette: Warm Amber & Deep Slate (Slate-900, Amber-600, Amber-50, Slate-50) -->
-    <!-- Application Structure Plan: To provide a professional operational dashboard and interactive guide for organizers, teams, press, and attendees of the Mario Negrón Molina Memorial Quadrangular. The SPA is structured into 6 thematic modules: Executive Overview & Countdown, Interactive Fixture & Match Center, Operational Commissions Task Hub, Tribute & Legacy Section, Solidarity Campaign (Parroquia Leopoldo Mandic Tracker), and GORE Financial & Budgetary Analytics. This layout transforms static planning into an actionable operational cockpit. -->
+    <!-- Application Structure Plan: Designed a responsive dual navigation system: a desktop horizontal tab bar for large displays and a modern hamburger drawer menu for mobile viewports. The mobile drawer features touch-friendly target zones, real-time active state indicators, and auto-collapse functionality upon item selection to maintain smooth mobile UX while exploring the 5 key sections of the Quadrangular. -->
     <!-- Visualization & Content Choices: 
+      - Dynamic Hamburger Toggle: CSS/Tailwind animated button with clear open/close state toggling.
       - GORE Project Budget Allocation: Chart.js Doughnut Chart -> Interactive item selection -> Displays percentage and exact allocation per commission item.
       - Interactive Fixture Timeline: HTML/Tailwind Card View -> Day filter buttons -> Switches match schedules dynamically with detail popovers.
       - Commission Checklist System: Interactive HTML grid with JS state toggles -> Interactive status updates for organizing committees.
@@ -68,75 +76,138 @@
 
     <!-- Header / Banner Header -->
     <header class="bg-slate-900 text-white border-b-4 border-amber-600 sticky top-0 z-50 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
+            
+            <!-- Brand & Title -->
             <div class="flex items-center space-x-3">
-                <div class="w-12 h-12 bg-amber-600 text-slate-900 rounded-full flex items-center justify-center font-black text-2xl shadow-inner border border-amber-300">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber-600 text-slate-900 rounded-full flex items-center justify-center font-black text-xl sm:text-2xl shadow-inner border border-amber-300 flex-shrink-0">
                     🏀
                 </div>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-amber-400">
-                        CUADRANGULAR DE BÁSQUETBOL 2026
+                    <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-amber-400 leading-tight">
+                        CUADRANGULAR DE BÁSQUETBOL
                     </h1>
                     <p class="text-xs sm:text-sm text-slate-300 font-medium">
-                        Homenaje a Mario Negrón Molina Q.E.P.D. | <span class="text-amber-200">Maxibásquet Osorno</span>
+                        Homenaje a Mario Negrón Molina Q.E.P.D. <span class="hidden sm:inline">| Maxibásquet Osorno</span>
                     </p>
                 </div>
             </div>
-            
-            <div class="flex items-center space-x-2 text-xs sm:text-sm text-slate-300 bg-slate-800/80 px-4 py-2 rounded-lg border border-slate-700">
-                <span>📍 Gimnasio Liceo Eleuterio Ramírez, Osorno</span>
-                <span class="text-amber-500">|</span>
-                <span>📅 02 y 03 de Octubre 2026</span>
+
+            <!-- Header Quick Info & Mobile Hamburger Button -->
+            <div class="flex items-center space-x-3">
+                <!-- Location Info (Hidden on small mobile) -->
+                <div class="hidden lg:flex items-center space-x-2 text-xs text-slate-300 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <span>📍 Gimnasio Liceo Eleuterio Ramírez</span>
+                    <span class="text-amber-500">•</span>
+                    <span>📅 02 y 03 Octubre 2026</span>
+                </div>
+
+                <!-- Hamburger Button (Mobile Only) -->
+                <button id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Abrir Menú de Navegación" class="md:hidden inline-flex items-center justify-center p-2.5 rounded-xl text-slate-200 bg-slate-800 hover:text-amber-400 hover:bg-slate-700 border border-slate-700 focus:outline-none transition">
+                    <span id="hamburger-icon" class="text-xl leading-none font-bold">☰</span>
+                    <span id="close-icon" class="text-xl leading-none font-bold hidden">✕</span>
+                </button>
             </div>
         </div>
 
-        <!-- Navigation Bar -->
-        <nav class="bg-slate-800 border-t border-slate-700 text-xs sm:text-sm overflow-x-auto">
-            <div class="max-w-7xl mx-auto px-4 flex whitespace-nowrap space-x-1 sm:space-x-6">
-                <button onclick="switchTab('tab-cronograma')" id="btn-cronograma" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition tab-active">
-                    ⏱️ Cronograma & Fixture
+        <!-- Desktop Navigation Bar (md and up) -->
+        <nav class="hidden md:block bg-slate-800 border-t border-slate-700/80 text-xs sm:text-sm">
+            <div class="max-w-7xl mx-auto px-4 flex justify-between whitespace-nowrap">
+                <button onclick="switchTab('tab-cronograma')" id="btn-cronograma" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition tab-active flex items-center gap-2">
+                    <span>⏱️</span> Cronograma & Fixture
                 </button>
-                <button onclick="switchTab('tab-comisiones')" id="btn-comisiones" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition">
-                    📋 Comisiones Operativas
+                <button onclick="switchTab('tab-comisiones')" id="btn-comisiones" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition flex items-center gap-2">
+                    <span>📋</span> Comisiones Operativas
                 </button>
-                <button onclick="switchTab('tab-homenaje')" id="btn-homenaje" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition">
-                    🏆 Homenaje & Delegaciones
+                <button onclick="switchTab('tab-homenaje')" id="btn-homenaje" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition flex items-center gap-2">
+                    <span>🏆</span> Homenaje & Delegaciones
                 </button>
-                <button onclick="switchTab('tab-social')" id="btn-social" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition">
-                    🤝 Campaña Solidaria
+                <button onclick="switchTab('tab-social')" id="btn-social" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition flex items-center gap-2">
+                    <span>🤝</span> Campaña Solidaria
                 </button>
-                <button onclick="switchTab('tab-finanzas')" id="btn-finanzas" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition">
-                    📊 Gestión Financiera GORE
+                <button onclick="switchTab('tab-finanzas')" id="btn-finanzas" class="tab-btn px-4 py-3 text-slate-300 hover:text-amber-400 transition flex items-center gap-2">
+                    <span>📊</span> Gestión Financiera GORE
                 </button>
             </div>
         </nav>
+
+        <!-- Mobile Drawer Navigation (Slide Down Overlay) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-t border-amber-600/60 shadow-2xl transition-all duration-300 ease-in-out">
+            <div class="px-3 pt-2 pb-4 space-y-1.5 text-sm">
+                
+                <div class="px-3 py-1.5 mb-1 bg-slate-800/60 rounded-lg text-xs text-amber-300/80 font-semibold uppercase tracking-wider">
+                    Menú Principal
+                </div>
+
+                <button onclick="selectMobileTab('tab-cronograma')" id="mobile-btn-cronograma" class="mobile-tab-btn w-full text-left px-4 py-3 rounded-xl text-slate-200 hover:bg-slate-800 hover:text-amber-400 flex items-center justify-between transition mobile-tab-active">
+                    <span class="flex items-center gap-3 font-medium">
+                        <span class="text-base">⏱️</span> Cronograma & Fixture
+                    </span>
+                    <span class="text-xs text-amber-400 font-bold">▶</span>
+                </button>
+
+                <button onclick="selectMobileTab('tab-comisiones')" id="mobile-btn-comisiones" class="mobile-tab-btn w-full text-left px-4 py-3 rounded-xl text-slate-200 hover:bg-slate-800 hover:text-amber-400 flex items-center justify-between transition">
+                    <span class="flex items-center gap-3 font-medium">
+                        <span class="text-base">📋</span> Comisiones Operativas
+                    </span>
+                    <span class="text-xs text-amber-400 font-bold">▶</span>
+                </button>
+
+                <button onclick="selectMobileTab('tab-homenaje')" id="mobile-btn-homenaje" class="mobile-tab-btn w-full text-left px-4 py-3 rounded-xl text-slate-200 hover:bg-slate-800 hover:text-amber-400 flex items-center justify-between transition">
+                    <span class="flex items-center gap-3 font-medium">
+                        <span class="text-base">🏆</span> Homenaje & Delegaciones
+                    </span>
+                    <span class="text-xs text-amber-400 font-bold">▶</span>
+                </button>
+
+                <button onclick="selectMobileTab('tab-social')" id="mobile-btn-social" class="mobile-tab-btn w-full text-left px-4 py-3 rounded-xl text-slate-200 hover:bg-slate-800 hover:text-amber-400 flex items-center justify-between transition">
+                    <span class="flex items-center gap-3 font-medium">
+                        <span class="text-base">🤝</span> Campaña Solidaria
+                    </span>
+                    <span class="text-xs text-amber-400 font-bold">▶</span>
+                </button>
+
+                <button onclick="selectMobileTab('tab-finanzas')" id="mobile-btn-finanzas" class="mobile-tab-btn w-full text-left px-4 py-3 rounded-xl text-slate-200 hover:bg-slate-800 hover:text-amber-400 flex items-center justify-between transition">
+                    <span class="flex items-center gap-3 font-medium">
+                        <span class="text-base">📊</span> Gestión Financiera GORE
+                    </span>
+                    <span class="text-xs text-amber-400 font-bold">▶</span>
+                </button>
+
+                <!-- Mobile Quick Event Details -->
+                <div class="mt-4 pt-3 border-t border-slate-800 px-3 text-xs text-slate-400 space-y-1">
+                    <p class="flex items-center gap-2">📍 Gimnasio Liceo Eleuterio Ramírez, Osorno</p>
+                    <p class="flex items-center gap-2">📅 02 y 03 de Octubre de 2026</p>
+                </div>
+            </div>
+        </div>
     </header>
 
     <!-- Main Content Area -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-grow w-full">
 
         <!-- INTRODUCTORY BRIEF -->
-        <div class="mb-8 bg-white p-6 rounded-2xl shadow-sm border border-amber-200/60">
+        <div class="mb-6 sm:mb-8 bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-amber-200/60">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                 <div>
                     <span class="inline-block bg-amber-100 text-amber-800 font-semibold text-xs px-3 py-1 rounded-full uppercase tracking-wider mb-2">
                         Manual Operativo Oficial & Plataforma de Gestión
                     </span>
-                    <h2 class="text-2xl font-bold text-slate-900">
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
                         Plataforma Integrada del Campeonato Cuadrangular
                     </h2>
-                    <p class="text-slate-600 text-sm mt-1 max-w-3xl">
+                    <p class="text-slate-600 text-xs sm:text-sm mt-1 max-w-3xl leading-relaxed">
                         Este portal interactivo centraliza toda la planificación deportiva, logística, ceremonial y financiera del cuadrangular organizado por el <strong>Club Deportivo, Social y Cultural Maxibásquetbol de Osorno</strong>. Explore los horarios detallados, el seguimiento de comisiones, el plan social para la Parroquia Leopoldo Mandic y el presupuesto financiado por el Proyecto GORE.
                     </p>
                 </div>
-                <div class="flex items-center space-x-3 w-full lg:w-auto justify-end">
-                    <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-center min-w-[120px]">
-                        <span class="block text-2xl font-black text-amber-700">4</span>
-                        <span class="text-xs font-semibold text-slate-600">Clubes Élite</span>
+                <div class="flex items-center space-x-3 w-full lg:w-auto justify-start sm:justify-end">
+                    <div class="bg-amber-50 border border-amber-200 p-2.5 sm:p-3 rounded-xl text-center min-w-[100px] sm:min-w-[120px]">
+                        <span class="block text-xl sm:text-2xl font-black text-amber-700">4</span>
+                        <span class="text-[11px] sm:text-xs font-semibold text-slate-600">Clubes Élite</span>
                     </div>
-                    <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-center min-w-[120px]">
-                        <span class="block text-2xl font-black text-amber-700">4</span>
-                        <span class="text-xs font-semibold text-slate-600">Partidos Definitorios</span>
+                    <div class="bg-amber-50 border border-amber-200 p-2.5 sm:p-3 rounded-xl text-center min-w-[100px] sm:min-w-[120px]">
+                        <span class="block text-xl sm:text-2xl font-black text-amber-700">4</span>
+                        <span class="text-[11px] sm:text-xs font-semibold text-slate-600">Partidos Definitorios</span>
                     </div>
                 </div>
             </div>
@@ -144,20 +215,20 @@
 
         <!-- SECTION 1: CRONOGRAMA & FIXTURE -->
         <section id="tab-cronograma" class="tab-content space-y-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h3 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+            <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-lg sm:text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
                     <span class="text-amber-600">🗓️</span> Fixture Deportivo y Cronograma de Encuentros
                 </h3>
-                <p class="text-slate-600 text-sm mb-6">
+                <p class="text-slate-600 text-xs sm:text-sm mb-6">
                     El campeonato consta de 4 partidos disputados entre el viernes 02 y sábado 03 de Octubre de 2026 en el Gimnasio del Liceo Eleuterio Ramírez. Seleccione una jornada para revisar los horarios detallados, actos inaugurales, arbitrajes y enlaces de transmisión.
                 </p>
 
                 <!-- Day Selector Buttons -->
-                <div class="flex space-x-3 mb-6">
-                    <button onclick="filterSchedule('viernes')" id="btn-day-1" class="px-5 py-2.5 rounded-xl font-semibold text-sm bg-amber-600 text-white shadow-sm hover:bg-amber-700 transition">
+                <div class="flex flex-col sm:flex-row gap-2.5 mb-6">
+                    <button onclick="filterSchedule('viernes')" id="btn-day-1" class="w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-amber-600 text-white shadow-sm hover:bg-amber-700 transition text-center">
                         Viernes 02 de Octubre (Jornada Inaugural)
                     </button>
-                    <button onclick="filterSchedule('sabado')" id="btn-day-2" class="px-5 py-2.5 rounded-xl font-semibold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+                    <button onclick="filterSchedule('sabado')" id="btn-day-2" class="w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition text-center">
                         Sábado 03 de Octubre (Jornada de Clausura)
                     </button>
                 </div>
@@ -196,17 +267,17 @@
 
         <!-- SECTION 2: COMISIONES OPERATIVAS -->
         <section id="tab-comisiones" class="tab-content hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
                     <div>
-                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <h3 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
                             <span class="text-amber-600">📋</span> Matriz de Control por Comisiones Operativas
                         </h3>
-                        <p class="text-slate-600 text-sm">
+                        <p class="text-slate-600 text-xs sm:text-sm">
                             Haga clic en los ítems de control para marcar las tareas completadas y dar seguimiento al estado de preparación general de la comisión.
                         </p>
                     </div>
-                    <div class="bg-amber-50 px-4 py-2 rounded-xl border border-amber-200 text-right">
+                    <div class="bg-amber-50 px-4 py-2 rounded-xl border border-amber-200 w-full md:w-auto text-left md:text-right">
                         <span class="text-xs text-slate-500 font-semibold block">Avance General Estimado</span>
                         <span id="overall-progress" class="text-lg font-black text-amber-700">0%</span>
                     </div>
@@ -214,12 +285,12 @@
 
                 <!-- Commission Filter Pills -->
                 <div class="flex flex-wrap gap-2 mb-6">
-                    <button onclick="filterCommission('all')" class="comm-filter-btn active-comm px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white">Todas las Comisiones</button>
-                    <button onclick="filterCommission('difusion')" class="comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Difusión & Marketing</button>
-                    <button onclick="filterCommission('logistica')" class="comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Logística Recinto</button>
-                    <button onclick="filterCommission('ceremonia')" class="comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Protocolo & Convivencia</button>
-                    <button onclick="filterCommission('social')" class="comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Acción Social</button>
-                    <button onclick="filterCommission('finanzas')" class="comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Finanzas GORE</button>
+                    <button onclick="filterCommission('all')" class="comm-filter-btn active-comm px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white">Todas las Comisiones</button>
+                    <button onclick="filterCommission('difusion')" class="comm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Difusión & Marketing</button>
+                    <button onclick="filterCommission('logistica')" class="comm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Logística Recinto</button>
+                    <button onclick="filterCommission('ceremonia')" class="comm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Protocolo & Convivencia</button>
+                    <button onclick="filterCommission('social')" class="comm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Acción Social</button>
+                    <button onclick="filterCommission('finanzas')" class="comm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Finanzas GORE</button>
                 </div>
 
                 <!-- Interactive Checklist Cards Container -->
@@ -234,12 +305,12 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
                 <!-- Mario Negrón Profile Card -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 flex flex-col justify-between">
+                <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 flex flex-col justify-between">
                     <div>
                         <div class="w-20 h-20 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center font-bold text-3xl mx-auto mb-4 border-2 border-amber-400">
                             👤
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 text-center">Don Mario Negrón Molina</h3>
+                        <h3 class="text-lg sm:text-xl font-bold text-slate-900 text-center">Don Mario Negrón Molina</h3>
                         <p class="text-xs text-amber-700 font-bold text-center uppercase tracking-widest mb-4">Q.E.P.D. - Homenajeado Honorífico</p>
                         <hr class="border-slate-100 mb-4">
                         <p class="text-xs text-slate-600 leading-relaxed mb-4">
@@ -266,11 +337,11 @@
                 </div>
 
                 <!-- Quad Teams Showcase -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 space-y-4">
-                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 space-y-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
                         <span class="text-amber-600">🛡️</span> Clubes Participantes & Enfrentamientos
                     </h3>
-                    <p class="text-slate-600 text-sm mb-4">
+                    <p class="text-slate-600 text-xs sm:text-sm mb-4">
                         El torneo reúne a cuatro prestigiosas instituciones del básquetbol regional de la zona sur.
                     </p>
 
@@ -333,20 +404,20 @@
 
         <!-- SECTION 4: CAMPAÑA SOLIDARIA PARROQUIA -->
         <section id="tab-social" class="tab-content hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200">
                 <div class="max-w-3xl">
                     <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">Acción Social Solidaria</span>
-                    <h3 class="text-xl font-bold text-slate-900 mt-2 flex items-center gap-2">
+                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 mt-2 flex items-center gap-2">
                         <span class="text-emerald-600">📦</span> Acopio de Alimentos: Parroquia Leopoldo Mandic
                     </h3>
-                    <p class="text-slate-600 text-sm mt-1">
+                    <p class="text-slate-600 text-xs sm:text-sm mt-1">
                         El cuadrangular posee un fuerte fin social. Todo el público asistente, delegaciones deportivas y dirigentes colaborarán donando alimentos no perecibles para las familias vulnerables atendidas por la Parroquia Leopoldo Mandic.
                     </p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <!-- Dynamic Donation Tracker -->
-                    <div class="bg-emerald-50/60 border border-emerald-200 p-6 rounded-xl space-y-4">
+                    <div class="bg-emerald-50/60 border border-emerald-200 p-5 sm:p-6 rounded-xl space-y-4">
                         <h4 class="font-bold text-slate-900 text-sm flex justify-between">
                             <span>Meta Estimada de Donaciones</span>
                             <span class="text-emerald-700 font-extrabold" id="donation-target-text">500 kg / Cajas</span>
@@ -363,7 +434,7 @@
                         </div>
 
                         <!-- Simulator button -->
-                        <div class="pt-2 border-t border-emerald-200 flex gap-2">
+                        <div class="pt-2 border-t border-emerald-200 flex flex-wrap gap-2">
                             <button onclick="addDonation(25)" class="text-xs bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-semibold hover:bg-emerald-800 transition">+ Sumar 25 kg (Simulación)</button>
                             <button onclick="resetDonation()" class="text-xs bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-semibold hover:bg-slate-300 transition">Reiniciar</button>
                         </div>
@@ -401,13 +472,13 @@
 
         <!-- SECTION 5: GESTIÓN FINANCIERA GORE -->
         <section id="tab-finanzas" class="tab-content hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200">
                 <div class="mb-6">
                     <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Proyecto Fondos GORE</span>
-                    <h3 class="text-xl font-bold text-slate-900 mt-2 flex items-center gap-2">
+                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 mt-2 flex items-center gap-2">
                         <span class="text-amber-600">📊</span> Distribución Presupuestaria y Rendición de Cuentas
                     </h3>
-                    <p class="text-slate-600 text-sm mt-1">
+                    <p class="text-slate-600 text-xs sm:text-sm mt-1">
                         Estructura financiera de compras, contrataciones e ítems operativos aprobados dentro del marco presupuestario del Gobierno Regional (GORE) para la ejecución impecable del campeonato.
                     </p>
                 </div>
@@ -598,17 +669,65 @@
             { id: 11, cat: "finanzas", title: "Presupuesto & Respaldos GORE", desc: "Compilado de facturas, boletas y rendición al Proyecto GORE.", done: false }
         ];
 
+        // Mobile Menu Toggling Logic
+        let isMobileMenuOpen = false;
+        function toggleMobileMenu() {
+            isMobileMenuOpen = !isMobileMenuOpen;
+            const menu = document.getElementById('mobile-menu');
+            const hamburgerIcon = document.getElementById('hamburger-icon');
+            const closeIcon = document.getElementById('close-icon');
+
+            if (isMobileMenuOpen) {
+                menu.classList.remove('hidden');
+                hamburgerIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+                hamburgerIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+        }
+
+        function closeMobileMenu() {
+            if (isMobileMenuOpen) {
+                isMobileMenuOpen = false;
+                document.getElementById('mobile-menu').classList.add('hidden');
+                document.getElementById('hamburger-icon').classList.remove('hidden');
+                document.getElementById('close-icon').classList.add('hidden');
+            }
+        }
+
+        // Selection handler for Mobile Drawer Menu
+        function selectMobileTab(tabId) {
+            switchTab(tabId);
+            closeMobileMenu();
+        }
+
         // Interactive Tab Switcher
         function switchTab(tabId) {
+            // Hide all tab content
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Clear desktop buttons active styles
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
             
+            // Clear mobile drawer buttons active styles
+            document.querySelectorAll('.mobile-tab-btn').forEach(btn => btn.classList.remove('mobile-tab-active'));
+
+            // Show current section
             document.getElementById(tabId).classList.remove('hidden');
             
-            const activeBtn = document.getElementById('btn-' + tabId.replace('tab-', ''));
-            if(activeBtn) activeBtn.classList.add('tab-active');
+            // Highlight current desktop tab
+            const tabName = tabId.replace('tab-', '');
+            const activeDesktopBtn = document.getElementById('btn-' + tabName);
+            if (activeDesktopBtn) activeDesktopBtn.classList.add('tab-active');
 
-            if(tabId === 'tab-finanzas') {
+            // Highlight current mobile tab
+            const activeMobileBtn = document.getElementById('mobile-btn-' + tabName);
+            if (activeMobileBtn) activeMobileBtn.classList.add('mobile-tab-active');
+
+            // Render chart if finance tab is opened
+            if (tabId === 'tab-finanzas') {
                 renderChart();
             }
         }
@@ -620,11 +739,11 @@
             const btn2 = document.getElementById('btn-day-2');
 
             if(day === 'viernes') {
-                btn1.className = "px-5 py-2.5 rounded-xl font-semibold text-sm bg-amber-600 text-white shadow-sm hover:bg-amber-700 transition";
-                btn2.className = "px-5 py-2.5 rounded-xl font-semibold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
+                btn1.className = "w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-amber-600 text-white shadow-sm hover:bg-amber-700 transition text-center";
+                btn2.className = "w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition text-center";
             } else {
-                btn2.className = "px-5 py-2.5 rounded-xl font-semibold text-sm bg-amber-600 text-white shadow-sm hover:bg-amber-700 transition";
-                btn1.className = "px-5 py-2.5 rounded-xl font-semibold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
+                btn2.className = "w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-amber-600 text-white shadow-sm hover:bg-amber-700 transition text-center";
+                btn1.className = "w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition text-center";
             }
 
             const items = fixtureData[day];
@@ -680,9 +799,9 @@
         function filterCommission(cat) {
             currentCommissionFilter = cat;
             document.querySelectorAll('.comm-filter-btn').forEach(btn => {
-                btn.className = "comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200";
+                btn.className = "comm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200";
             });
-            event.target.className = "comm-filter-btn px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white";
+            event.target.className = "comm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white";
             renderCommissions(cat);
         }
 
